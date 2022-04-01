@@ -24,6 +24,7 @@ class FeatureEngineering:
     # Nasser
     def calculate_speed_variation(self,row):
         track_id = int(row["trackId"])
+        print("hi")
 
 
     # Ahmad
