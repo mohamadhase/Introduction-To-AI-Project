@@ -73,6 +73,15 @@ class FeatureEngineering:
     # Omar
     def calculate_quantile_co_acceleration(self,row):  # Use only the positive values for xAcceleration
         track_id = int(row["trackId"])
+        trackDF = self.data.tracks_df[self.data.tracks_df[track_id].equals(track_id)]
+        Acceleration = trackDF[trackDF["lonAcceleration"]>0]
+        Q1 = ((self.data.tracks_df[self.data.tracks_df[track_id].equals(track_id)][Acceleration]).quantile(0.25))
+        Q3 = ((self.data.tracks_df[self.data.tracks_df[track_id].equals(track_id)][Acceleration]).quantile(0.75))
+        if Q1 + Q3 == 0 :
+            return 0
+        return 100*((Q3-Q1)/(Q3+Q1))
+        
+
 
 
     # Hmouda
@@ -136,7 +145,7 @@ class FeatureEngineering:
 
 
     def apply_dv9(self):
-        self.data.tracks_df["DV9"] = self.data.tracks_df.apply(self.calculate_quantile_co_acceleration, axis=1)
+        self.data.tracks_df["DV9"] = self.result.apply(self.calculate_quantile_co_acceleration, axis=1)
 
 
     def apply_dv10(self):
