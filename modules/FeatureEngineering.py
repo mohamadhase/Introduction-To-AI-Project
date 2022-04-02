@@ -1,6 +1,7 @@
 from cmath import nan
 import glob
 import os.path
+from statistics import median_low
 from numpy import NaN
 import pandas as pd
 import math
@@ -16,21 +17,21 @@ class FeatureEngineering:
        
       self.result["trackId"] = self.data.tracks_df["trackId"].unique()
         
-# Ahmad
+# Ahmad DV1
     def calculate_speed_deviation(self,row):
         track_id = int(row['trackId'])
         velocity = row['xVelocity']
         return math.sqrt(math.pow((velocity - self.data.avg_velocities[track_id]), 2) / len(self.data.tracks_df.index))
 
 
-    # Ahmad
+    # Ahmad DV2
     def calculate_long_a_deviation(self,row):
         track_id = int(row["trackId"])
         long_a = row["xAcceleration"]
         return math.sqrt(math.pow(long_a - self.data.avg_accelerations[track_id], 2) / len(self.data.tracks_df.index))
 
 
-    # Nasser
+    # Nasser DV3
     def calculate_speed_variation(self,row):
         track_id = int(row["trackId"])
         DV1 = row["DV1"]
@@ -38,27 +39,35 @@ class FeatureEngineering:
         return 100*(DV1/mean)
 
 
-    # Ahmad
+    # Ahmad DV4
     def calculate_acceleration_variation(self,row):  # Use only the positive values from xAcceleration
         track_id = int(row["trackId"])
 
 
-    # Omar
-    def calculate_deceleration_variation(self,row):  # Use only the negative values from xAcceleration
+    # Omar DV5
+    def calculate_deceleration_variation(self,row):  # Use only the negative values from lonAcceleration
         track_id = int(row["trackId"])
+        trackDF = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id])
+        Deceleration = (trackDF[trackDF["lonAcceleration"] < 0]["lonAcceleration"])
+        std = Deceleration.std()
+        mean = Deceleration.mean()
+        if mean == 0:
+            return 0
+
+        return 100 * (std / mean) 
 
 
-    # Karam
+    # Karam DV6
     def calculate_abs_speed_deviation(self,row):
         track_id = int(row["trackId"])
 
 
-    # Yaseen
+    # Yaseen DV7
     def calculate_abs_acceleration_deviation(self,row):  # Use only positive values from xAcceleration
         track_id = int(row["trackId"])
 
 
-    # Nasser
+    # Nasser DV8
     def calculate_quantile_co_speed(self,row):
         track_id = int(row["trackId"])
         
@@ -70,12 +79,12 @@ class FeatureEngineering:
         return result
 
 
-    # Omar
+    # Omar DV9
     def calculate_quantile_co_acceleration(self,row):  # Use only the positive values for xAcceleration
         track_id = int(row["trackId"])
         trackDF = self.data.tracks_df[self.data.tracks_df["trackId"]==track_id]
-        Acceleration = trackDF[trackDF["lonAcceleration"]>0]
-        Q1 =Acceleration["lonAcceleration"].quantile(0.25)
+        Acceleration = trackDF[trackDF["lonAcceleration"]>=0]
+        Q1 = Acceleration["lonAcceleration"].quantile(0.25)
         Q3 = Acceleration["lonAcceleration"].quantile(0.75)
         if Q1 + Q3 == 0 :
             return 0
@@ -84,22 +93,22 @@ class FeatureEngineering:
 
 
 
-    # Hmouda
+    # Hmouda DV10
     def calculate_quantile_co_deceleration(self,row):  # Use only the negative values for xAcceleration
         track_id = int(row["trackId"])
 
 
-    # Karam
+    # Karam DV11
     def calculate_percentage_time_speed(self,row):
         track_id = int(row["trackId"])
 
 
-    # Yaseen
+    # Yaseen DV12
     def calculate_percentage_time_acceleration(self,row):  # Use only the positive values for xAcceleration
         track_id = int(row["trackId"])
 
 
-    # Hmouda
+    # Hmouda DV13
     def calculate_percentage_time_deceleration(self,row):  # Use only the negative values for xAcceleration
         track_id = int(row["trackId"])
         dec1 = self.data.tracks_df[self.data.tracks_df["tracID"]==track_id]
@@ -111,12 +120,12 @@ class FeatureEngineering:
         
 
     def apply_dv1(self):
-        self.data.tracks_df["DV1"] = self.result.apply(self.calculate_speed_deviation, axis=1)
+        self.result["DV1"] = self.result.apply(self.calculate_speed_deviation, axis=1)
 
 
 
     def apply_dv2(self):
-        self.data.tracks_df["DV2"] = self.result.apply(self.calculate_long_a_deviation, axis=1)
+        self.result["DV2"] = self.result.apply(self.calculate_long_a_deviation, axis=1)
 
 
     def apply_dv3(self):
@@ -124,24 +133,24 @@ class FeatureEngineering:
 
 
     def apply_dv4(self):
-        self.data.tracks_df["DV4"] = self.result.apply(self.calculate_acceleration_variation, axis=1)
+        self.result["DV4"] = self.result.apply(self.calculate_acceleration_variation, axis=1)
 
 
     def apply_dv5(self):
-        self.data.tracks_df["DV5"] = self.result.apply(self.calculate_deceleration_variation, axis=1)
+        self.result["DV5"] = self.result.apply(self.calculate_deceleration_variation, axis=1)
 
 
     def apply_dv6(self):
-        self.data.tracks_df["DV6"] = self.result.apply(self.calculate_abs_speed_deviation, axis=1)
+        self.result["DV6"] = self.result.apply(self.calculate_abs_speed_deviation, axis=1)
 
 
     def apply_dv7(self):
-        self.data.tracks_df["DV7"] = self.result.apply(self.calculate_abs_acceleration_deviation, axis=1)
+        self.result["DV7"] = self.result.apply(self.calculate_abs_acceleration_deviation, axis=1)
 
 
     def apply_dv8(self):
-         self.result["DV8"] = self.result.apply(self.calculate_quantile_co_speed, axis=1)
-         print(self.result)
+        self.result["DV8"] = self.result.apply(self.calculate_quantile_co_speed, axis=1)
+        print(self.result)
 
 
     def apply_dv9(self):
@@ -161,6 +170,6 @@ class FeatureEngineering:
 
 
     def apply_dv13(self):
-       self.result["DV13"] =  self.result.apply(self.calculate_percentage_time_deceleration, axis=1)
+        self.result["DV13"] =  self.result.apply(self.calculate_percentage_time_deceleration, axis=1)
 
 
