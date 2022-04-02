@@ -17,17 +17,19 @@ class FeatureEngineering:
       self.result["trackId"] = self.data.tracks_df["trackId"].unique()
         
 # Ahmad
-    def calculate_speed_deviation(self,row):
+        def calculate_speed_deviation(self,row):
         track_id = int(row['trackId'])
-        velocity = row['xVelocity']
-        return math.sqrt(math.pow((velocity - self.data.avg_velocities[track_id]), 2) / len(self.data.tracks_df.index))
+        filtered_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id]["xVelocity"])
+        sd = filtered_df.std()
+        return sd
 
 
     # Ahmad
-    def calculate_long_a_deviation(self,row):
+        def calculate_long_a_deviation(self,row):
         track_id = int(row["trackId"])
-        long_a = row["xAcceleration"]
-        return math.sqrt(math.pow(long_a - self.data.avg_accelerations[track_id], 2) / len(self.data.tracks_df.index))
+        filtered_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id]["lonAcceleration"])
+        sd = filtered_df.std()
+        return sd
 
 
     # Nasser
@@ -102,12 +104,13 @@ class FeatureEngineering:
         
 
     def apply_dv1(self):
-        self.data.tracks_df["DV1"] = self.data.tracks_df.apply(self.calculate_speed_deviation, axis=1)
-
+        self.result["DV1"] = self.result.apply(self.calculate_speed_deviation, axis=1)
+        print(self.result)
 
 
     def apply_dv2(self):
-        self.data.tracks_df["DV2"] = self.data.tracks_df.apply(self.calculate_long_a_deviation, axis=1)
+        self.result["DV2"] = self.result.apply(self.calculate_long_a_deviation, axis=1)
+        print(self.result)
 
 
     def apply_dv3(self):
