@@ -17,15 +17,15 @@ class FeatureEngineering:
       self.result["trackId"] = self.data.tracks_df["trackId"].unique()
         
 # Ahmad
-        def calculate_speed_deviation(self,row):
+def calculate_speed_deviation(self,row):
         track_id = int(row['trackId'])
         filtered_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id]["xVelocity"])
         sd = filtered_df.std()
         return sd
 
 
-    # Ahmad
-        def calculate_long_a_deviation(self,row):
+   # Ahmad
+   def calculate_long_a_deviation(self,row):
         track_id = int(row["trackId"])
         filtered_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id]["lonAcceleration"])
         sd = filtered_df.std()
