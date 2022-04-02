@@ -44,11 +44,11 @@ class FeatureEngineering:
     def calculate_acceleration_variation(self,row):  # Use only the positive values from xAcceleration
         track_id = int(row["trackId"])
         filtered_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id])
-        filtered_df_dec = (filtered_df[filtered_df["lonAcceleration"] < 0]["lonAcceleration"])
-        sd_dec = filtered_df_dec.std()
-        mean = filtered_df_dec.mean()
+        filtered_df_acc = (filtered_df[filtered_df["lonAcceleration"] > 0]["lonAcceleration"])
+        sd_dec = filtered_df_acc.std()
+        mean = filtered_df_acc.mean()
 
-        if math.isnan(mean):
+        if mean == 0:
             return 0
 
         return 100 * (sd_dec / mean)
