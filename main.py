@@ -8,10 +8,10 @@ def main():
 
     featureEngineering = FeatureEngineering(data)
 
-    featureEngineering.apply_dv1()
+    featureEngineering.apply_dv8()
+    
 
 
-    featureEngineering.apply_dv2()
 
 
 if __name__ == "__main__":
