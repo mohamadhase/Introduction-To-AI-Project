@@ -6,7 +6,15 @@ from modules.Data import Data
 class FeatureEngineering:
     def __init__(self,data:Data):
         self.data = data
+        self.result = pd.DataFrame()
+        self.dataFrameInitlize()
 
+        
+    def dataFrameInitlize(self):
+       
+      self.result["trackId"] = self.data.tracks_df["trackId"].unique()
+      print(self.result)
+        
 # Ahmad
     def calculate_speed_deviation(self,row):
         track_id = int(row['trackId'])
@@ -24,7 +32,6 @@ class FeatureEngineering:
     # Nasser
     def calculate_speed_variation(self,row):
         track_id = int(row["trackId"])
-        print("hi")
 
 
     # Ahmad
@@ -48,8 +55,8 @@ class FeatureEngineering:
 
 
     # Nasser
-    def calculate_quantile_co_speed(self,row):
-        track_id = int(row["trackId"])
+    def calculate_quantile_co_speed(self):
+        self.data.tracks_df
 
 
     # Omar
@@ -81,6 +88,7 @@ class FeatureEngineering:
         self.data.tracks_df["DV1"] = self.data.tracks_df.apply(self.calculate_speed_deviation, axis=1)
 
 
+
     def apply_dv2(self):
         self.data.tracks_df["DV2"] = self.data.tracks_df.apply(self.calculate_long_a_deviation, axis=1)
 
@@ -106,7 +114,7 @@ class FeatureEngineering:
 
 
     def apply_dv8(self):
-        self.data.tracks_df["DV8"] = self.data.tracks_df.apply(self.calculate_quantile_co_speed, axis=1)
+        self.calculate_quantile_co_speed()
 
 
     def apply_dv9(self):
