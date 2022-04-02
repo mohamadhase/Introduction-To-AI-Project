@@ -1,10 +1,4 @@
-from cmath import nan
-import glob
-import os.path
-from statistics import median_low
-from numpy import NaN
 import pandas as pd
-import math
 from modules.Data import Data
 class FeatureEngineering:
     def __init__(self,data:Data):
@@ -34,7 +28,7 @@ class FeatureEngineering:
         return sd
 
 
-    # Nasser DV3
+    # Nasser
     def calculate_speed_variation(self,row):
         track_id = int(row["trackId"])
         DV1 = row["DV1"]
@@ -42,8 +36,8 @@ class FeatureEngineering:
         return 100*(DV1/mean)
 
 
-    # Ahmad DV4
-    def calculate_acceleration_variation(self,row):  # Use only the positive values from xAcceleration
+    # Ahmad
+    def calculate_acceleration_variation(self,row):  # Use only the positive values from lonAcceleration
         track_id = int(row["trackId"])
         filtered_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id])
         filtered_df_acc = (filtered_df[filtered_df["lonAcceleration"] > 0]["lonAcceleration"])
@@ -56,7 +50,7 @@ class FeatureEngineering:
         return 100 * (sd_dec / mean)
 
 
-    # Omar DV5
+    # Omar
     def calculate_deceleration_variation(self,row):  # Use only the negative values from lonAcceleration
         track_id = int(row["trackId"])
         trackDF = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id])
@@ -69,17 +63,17 @@ class FeatureEngineering:
         return 100 * (std / mean) 
 
 
-    # Karam DV6
+    # Karam
     def calculate_abs_speed_deviation(self,row):
         track_id = int(row["trackId"])
 
 
-    # Yaseen DV7
-    def calculate_abs_acceleration_deviation(self,row):  # Use only positive values from xAcceleration
+    # Yaseen
+    def calculate_abs_acceleration_deviation(self,row):  # Use only positive values from lonAcceleration
         track_id = int(row["trackId"])
 
 
-    # Nasser DV8
+    # Nasser
     def calculate_quantile_co_speed(self,row):
         track_id = int(row["trackId"])
         
@@ -91,8 +85,8 @@ class FeatureEngineering:
         return result
 
 
-    # Omar DV9
-    def calculate_quantile_co_acceleration(self,row):  # Use only the positive values for xAcceleration
+    # Omar
+    def calculate_quantile_co_acceleration(self,row):  # Use only the positive values for lonAcceleration
         track_id = int(row["trackId"])
         trackDF = self.data.tracks_df[self.data.tracks_df["trackId"]==track_id]
         Acceleration = trackDF[trackDF["lonAcceleration"]>=0]
@@ -105,22 +99,22 @@ class FeatureEngineering:
 
 
 
-    # Hmouda DV10
-    def calculate_quantile_co_deceleration(self,row):  # Use only the negative values for xAcceleration
+    # Hmouda
+    def calculate_quantile_co_deceleration(self,row):  # Use only the negative values for lonAcceleration
         track_id = int(row["trackId"])
 
 
-    # Karam DV11
+    # Karam
     def calculate_percentage_time_speed(self,row):
         track_id = int(row["trackId"])
 
 
-    # Yaseen DV12
-    def calculate_percentage_time_acceleration(self,row):  # Use only the positive values for xAcceleration
+    # Yaseen
+    def calculate_percentage_time_acceleration(self,row):  # Use only the positive values for lonAcceleration
         track_id = int(row["trackId"])
 
 
-    # Hmouda DV13
+    # Hmouda
     def calculate_percentage_time_deceleration(self,row):  # Use only the negative values for xAcceleration
         track_id = int(row["trackId"])
         dec1 = self.data.tracks_df[self.data.tracks_df["tracID"]==track_id]
