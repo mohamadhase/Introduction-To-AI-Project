@@ -17,18 +17,21 @@ class FeatureEngineering:
        
       self.result["trackId"] = self.data.tracks_df["trackId"].unique()
         
-# Ahmad DV1
+   # Ahmad
     def calculate_speed_deviation(self,row):
         track_id = int(row['trackId'])
-        velocity = row['xVelocity']
-        return math.sqrt(math.pow((velocity - self.data.avg_velocities[track_id]), 2) / len(self.data.tracks_df.index))
+        filtered_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id]["xVelocity"])
+        sd = filtered_df.std()
+        return sd
 
 
-    # Ahmad DV2
+
+   # Ahmad
     def calculate_long_a_deviation(self,row):
         track_id = int(row["trackId"])
-        long_a = row["xAcceleration"]
-        return math.sqrt(math.pow(long_a - self.data.avg_accelerations[track_id], 2) / len(self.data.tracks_df.index))
+        filtered_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id]["lonAcceleration"])
+        sd = filtered_df.std()
+        return sd
 
 
     # Nasser DV3
@@ -42,6 +45,15 @@ class FeatureEngineering:
     # Ahmad DV4
     def calculate_acceleration_variation(self,row):  # Use only the positive values from xAcceleration
         track_id = int(row["trackId"])
+        filtered_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id])
+        filtered_df_acc = (filtered_df[filtered_df["lonAcceleration"] > 0]["lonAcceleration"])
+        sd_dec = filtered_df_acc.std()
+        mean = filtered_df_acc.mean()
+
+        if mean == 0:
+            return 0
+
+        return 100 * (sd_dec / mean)
 
 
     # Omar DV5
@@ -122,10 +134,13 @@ class FeatureEngineering:
     def apply_dv1(self):
         self.result["DV1"] = self.result.apply(self.calculate_speed_deviation, axis=1)
 
+        print(self.result)
 
 
     def apply_dv2(self):
         self.result["DV2"] = self.result.apply(self.calculate_long_a_deviation, axis=1)
+
+        print(self.result)
 
 
     def apply_dv3(self):
@@ -134,6 +149,8 @@ class FeatureEngineering:
 
     def apply_dv4(self):
         self.result["DV4"] = self.result.apply(self.calculate_acceleration_variation, axis=1)
+
+        print(self.result)
 
 
     def apply_dv5(self):
