@@ -71,6 +71,11 @@ class FeatureEngineering:
     # Yaseen
     def calculate_abs_acceleration_deviation(self,row):  # Use only positive values from lonAcceleration
         track_id = int(row["trackId"])
+        df_tracks = self.data.tracks_df[self.data.tracks_df["tracID"]==track_id]
+        positive_tracks = df_tracks[df_tracks["lonAcceleration"] > 0] 
+        complement = positive_tracks["lonAcceleration"].mean()
+        result = abs(positive_tracks[positive_tracks["lonAcceleration"]-complement]).count()
+        return (result/positive_tracks.count()) 
 
 
     # Nasser
@@ -112,6 +117,11 @@ class FeatureEngineering:
     # Yaseen
     def calculate_percentage_time_acceleration(self,row):  # Use only the positive values for lonAcceleration
         track_id = int(row["trackId"])
+        df_tracks = self.data.tracks_df[self.data.tracks_df["tracID"]==track_id]
+        positive_tracks = df_tracks[df_tracks["lonAcceleration"] > 0] 
+        complement = positive_tracks["lonAcceleration"].mean()
+        result = positive_tracks[positive_tracks["lonAcceleration"] >= (complement + (2*row["DV2"]))].count()
+        return 100*(result/positive_tracks.count())
 
 
     # Hmouda
