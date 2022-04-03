@@ -66,7 +66,8 @@ class FeatureEngineering:
     # Karam
     def calculate_abs_speed_deviation(self,row):
         track_id = int(row["trackId"])
-
+        calculated_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id]["xVelocity"])
+        return calculated_df.mad()
 
     # Yaseen
     def calculate_abs_acceleration_deviation(self,row):  # Use only positive values from lonAcceleration
@@ -107,6 +108,12 @@ class FeatureEngineering:
     # Karam
     def calculate_percentage_time_speed(self,row):
         track_id = int(row["trackId"])
+        a = row["DV1"]
+        calculated_df = (self.data.tracks_df[self.data.tracks_df["trackId"]==track_id]["xVelocity"])
+        mean = calculated_df.mean()
+        c = calculated_df.count()
+        calculated_df = calculated_df[calculated_df >= mean]
+        return 100*((calculated_df + (2*a)) / c)
 
 
     # Yaseen
