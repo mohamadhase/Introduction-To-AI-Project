@@ -6,8 +6,11 @@ import math
 class Data:
     def __init__(self):
         self.tracks = os.path.join("data/", "*_tracks.csv")
+        self.metas = os.path.join("data/", "*_tracksMeta.csv")
         self.tracks = glob.glob(self.tracks)
-        self.tracks_df = pd.concat(map(pd.read_csv, self.tracks), ignore_index=True)  
+        self.metas = glob.glob(self.metas)
+        self.tracks_df = pd.concat(map(pd.read_csv, self.tracks), ignore_index=True)
+        self.metas_df = pd.concat(map(pd.read_csv, self.metas), ignore_index=True)
         self.grouped_tracks_df = pd.DataFrame()
         self.avg_velocities = []
         self.avg_accelerations = []
