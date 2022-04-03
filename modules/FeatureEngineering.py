@@ -108,12 +108,12 @@ class FeatureEngineering:
     # Karam
     def calculate_percentage_time_speed(self,row):
         track_id = int(row["trackId"])
-        a = row["DV1"]
+        sd_of_V = row["DV1"]
         calculated_df = (self.data.tracks_df[self.data.tracks_df["trackId"]==track_id]["xVelocity"])
         mean = calculated_df.mean()
-        n = calculated_df.count()
-        c = calculated_df[calculated_df["xVelocity"] >= mean + (2*a)].count()
-        return 100*(c/n)
+        size_of_calculated_df = calculated_df.count()
+        number_of_speeds_exceeds_mean = calculated_df[calculated_df["xVelocity"] >= mean + (2*sd_of_V)].count()
+        return 100*(number_of_speeds_exceeds_mean/size_of_calculated_df)
 
 
     # Yaseen
