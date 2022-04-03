@@ -8,8 +8,8 @@ class FeatureEngineering:
 
         
     def dataFrameInitlize(self):
-       
-      self.result["trackId"] = self.data.tracks_df["trackId"].unique()
+      self.result["trackId"] = self.data.metas_df["trackId"]
+      self.result["recordingId"] = self.data.metas_df["recordingId"]
         
    # Ahmad
     def calculate_speed_deviation(self,row):
