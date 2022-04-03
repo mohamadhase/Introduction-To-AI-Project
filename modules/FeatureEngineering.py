@@ -1,5 +1,6 @@
 import pandas as pd
 from modules.Data import Data
+import math
 class FeatureEngineering:
     def __init__(self,data:Data):
         self.data = data
