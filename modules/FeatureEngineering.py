@@ -111,9 +111,9 @@ class FeatureEngineering:
         a = row["DV1"]
         calculated_df = (self.data.tracks_df[self.data.tracks_df["trackId"]==track_id]["xVelocity"])
         mean = calculated_df.mean()
-        c = calculated_df.count()
-        calculated_df = calculated_df[calculated_df >= mean]
-        return 100*((calculated_df + (2*a)) / c)
+        n = calculated_df.count()
+        c = calculated_df[calculated_df["xVelocity"] >= mean + (2*a)].count()
+        return 100*(c/n)
 
 
     # Yaseen
