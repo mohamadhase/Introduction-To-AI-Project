@@ -103,6 +103,13 @@ class FeatureEngineering:
     # Hmouda
     def calculate_quantile_co_deceleration(self,row):  # Use only the negative values for lonAcceleration
         track_id = int(row["trackId"])
+        trackDf = self.data.tracks_df[self.data.tracks_df["trackId"] == track_id]
+        Decleration = trackDf[trackDf["lonAcceleration"] < 0]
+        Q1 = Decleration["lonAcceleration"].quantile(0.25)
+        Q3 = Decleration["lonAcceleration"].quantile(0.75)
+        if Q1 + Q3 == 0 :
+            return 0
+        return 100 * ((Q3 - Q1) / (Q3 + Q1))
 
 
     # Karam
@@ -124,12 +131,13 @@ class FeatureEngineering:
     # Hmouda
     def calculate_percentage_time_deceleration(self,row):  # Use only the negative values for xAcceleration
         track_id = int(row["trackId"])
-        dec1 = self.data.tracks_df[self.data.tracks_df["tracID"]==track_id]
-        sd = row["DV2"]
-        dec = dec1[dec1["xAcceleration"]<0]
-        mean  =  dec["xAcceleration"].mean()
-        count = dec[dec["xAcceleration"]>=mean+(2*sd)].count()
-        return 100* (count/dec.count())
+        singleTrackData= self.data.tracks_df[self.data.tracks_df["trackId"]==track_id]
+        SDtrack = singleTrackData["lonAcceleration"].std()
+        MeanTrack = singleTrackData["lonAcceleration"].mean()
+        lessThandf = singleTrackData[singleTrackData["lonAcceleration"]>=(MeanTrack+2*SDtrack)]
+        lessThanCount = lessThandf["lonAcceleration"].shape[0]
+        x =  100 * (lessThanCount/(singleTrackData.shape[0]))
+        return x
         
 
     def apply_dv1(self):
