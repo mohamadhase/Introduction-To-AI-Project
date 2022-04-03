@@ -8,7 +8,6 @@ def main():
 
     featureEngineering = FeatureEngineering(data)
 
-    featureEngineering.apply_dv8()
     
 
 
