@@ -19,7 +19,9 @@ class FeatureEngineering:
    # Ahmad
     def calculate_speed_deviation(self,row):
         track_id = int(row['trackId'])
-        filtered_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id]["xVelocity"])
+        recording_id = int(row['recordingId'])
+        condition = (self.data.tracks_df["trackId"] == track_id) & (self.data.tracks_df["recordingId"] == recording_id)
+        filtered_df = (self.data.tracks_df[condition]["xVelocity"])
         sd = filtered_df.std()
         return sd
 
@@ -27,7 +29,9 @@ class FeatureEngineering:
    # Ahmad
     def calculate_long_a_deviation(self,row):
         track_id = int(row["trackId"])
-        filtered_df = (self.data.tracks_df[self.data.tracks_df["trackId"] == track_id]["lonAcceleration"])
+        recording_id = int(row['recordingId'])
+        condition = (self.data.tracks_df["trackId"] == track_id) & (self.data.tracks_df["recordingId"] == recording_id)
+        filtered_df = (self.data.tracks_df[condition]["lonAcceleration"])
         sd = filtered_df.std()
         return sd
 
