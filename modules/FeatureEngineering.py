@@ -1,34 +1,63 @@
 import pandas as pd
+from scipy.fft import fft
 from modules.Data import Data
 import math
+from threading import Thread
+import time
+
 class FeatureEngineering:
     def __init__(self, data:Data):
         self.data = data
         self.volatility_df = pd.DataFrame()
         self.data_frame_init()
+
         self.dv_application()
 
         
     def data_frame_init(self):
       self.volatility_df["trackId"] = self.data.metas_df["trackId"]
       self.volatility_df["recordingId"] = self.data.metas_df["recordingId"]
+      print(self.volatility_df.shape)
+      print(self.data.tracks_df.shape)
 
     def dv_application(self):
-        self.apply_dv1()
-        self.apply_dv2()
-        self.apply_dv3()
-        self.apply_dv4()
-        self.apply_dv5()
-        self.apply_dv6()
-        self.apply_dv7()
-        self.apply_dv8()
-        self.apply_dv9()
-        self.apply_dv10()
-        self.apply_dv11()
-        self.apply_dv12()
-        self.apply_dv13()
+        threads = [
+        Thread(target = self.apply_dv1),
+        Thread(target = self.apply_dv2),
+        Thread(target = self.apply_dv3),
+        Thread(target = self.apply_dv4),
+        Thread(target = self.apply_dv5),
+        Thread(target = self.apply_dv6),
+        Thread(target = self.apply_dv7),
+        Thread(target = self.apply_dv8),
+        Thread(target = self.apply_dv9),
+        Thread(target = self.apply_dv10),
+        Thread(target = self.apply_dv11),
+        Thread(target = self.apply_dv12),
+        Thread(target = self.apply_dv13)
+        ]
+        
+        # self.apply_dv1()
+        # self.apply_dv2()
+        # self.apply_dv3()
+        # self.apply_dv4()
+        # self.apply_dv5()
+        # self.apply_dv6()
+        # self.apply_dv7()
+        # self.apply_dv8()
+        # self.apply_dv9()
+        # self.apply_dv10()
+        # self.apply_dv11()
+        # self.apply_dv12()
+        # self.apply_dv13()
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+        
         print("process Done")
-        self.save_to_csv()
+        self.volatility_df.to_csv("volatility_df.csv")
 
 
 
@@ -49,6 +78,7 @@ class FeatureEngineering:
 
    # Ahmad
     def calculate_long_a_deviation(self, row):
+
         track_id = int(row["trackId"])
         recording_id = int(row['recordingId'])
         condition = (self.data.tracks_df["trackId"] == track_id) & (self.data.tracks_df["recordingId"] == recording_id)
@@ -61,8 +91,9 @@ class FeatureEngineering:
     def calculate_speed_variation(self, row):
         track_id = int(row["trackId"])
         recording_id = int(row['recordingId'])
-        dv1 = row["DV1"]
         condition = (self.data.tracks_df["trackId"] == track_id) & (self.data.tracks_df["recordingId"] == recording_id)
+        ff = (self.data.tracks_df[condition]["xVelocity"])
+        dv1 = ff.std()
         mean = self.data.tracks_df[condition]["xVelocity"].mean()
         if(mean == 0):
             return 0
@@ -174,7 +205,9 @@ class FeatureEngineering:
         track_id = int(row["trackId"])
         recording_id = int(row['recordingId'])
         condition = (self.data.tracks_df["trackId"] == track_id) & (self.data.tracks_df["recordingId"] == recording_id)
-        double_velocity_std = 2*row["DV1"]
+        ff = (self.data.tracks_df[condition]["xVelocity"])
+        dv1 = ff.std()
+        double_velocity_std = 2*dv1
         filtered_df = (self.data.tracks_df[condition])
         mean = filtered_df["xVelocity"].mean()
         size_of_filtered_df = (filtered_df["xVelocity"]).shape[0]
@@ -213,57 +246,93 @@ class FeatureEngineering:
         
 
     def apply_dv1(self):
+        start_time = time.perf_counter ()
         self.volatility_df["DV1"] = self.volatility_df.apply(self.calculate_speed_deviation, axis = 1)
-
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV1")
 
 
     def apply_dv2(self):
+        start_time = time.perf_counter ()
         self.volatility_df["DV2"] = self.volatility_df.apply(self.calculate_long_a_deviation, axis = 1)
-
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV2")
 
 
     def apply_dv3(self):
+        
+        start_time = time.perf_counter ()
         self.volatility_df["DV3"] = self.volatility_df.apply(self.calculate_speed_variation, axis = 1)
 
 
-    def apply_dv4(self):
-        self.volatility_df["DV4"] = self.volatility_df.apply(self.calculate_acceleration_variation, axis = 1)
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV3")
 
+    def apply_dv4(self):
+        start_time = time.perf_counter ()
+        self.volatility_df["DV4"] = self.volatility_df.apply(self.calculate_acceleration_variation, axis = 1)
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV4")
 
 
     def apply_dv5(self):
+        start_time = time.perf_counter ()
         self.volatility_df["DV5"] = self.volatility_df.apply(self.calculate_deceleration_variation, axis = 1)
-
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV5")
 
     def apply_dv6(self):
+        start_time = time.perf_counter ()
         self.volatility_df["DV6"] = self.volatility_df.apply(self.calculate_abs_speed_deviation, axis = 1)
 
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV6")
 
     def apply_dv7(self):
+        start_time = time.perf_counter ()
         self.volatility_df["DV7"] = self.volatility_df.apply(self.calculate_abs_acceleration_deviation, axis = 1)
 
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV7")
 
     def apply_dv8(self):
+        start_time = time.perf_counter ()
         self.volatility_df["DV8"] = self.volatility_df.apply(self.calculate_quantile_co_speed, axis = 1)
-
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV8")
 
     def apply_dv9(self):
+        start_time = time.perf_counter ()
         self.volatility_df["DV9"] = self.volatility_df.apply(self.calculate_quantile_co_acceleration, axis = 1)
 
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV9")
 
     def apply_dv10(self):
+        start_time = time.perf_counter ()
         self.volatility_df["DV10"] = self.volatility_df.apply(self.calculate_quantile_co_deceleration, axis = 1)
 
 
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV10")
     def apply_dv11(self):
+        start_time = time.perf_counter ()
         self.volatility_df["DV11"] = self.volatility_df.apply(self.calculate_percentage_time_speed, axis = 1)
 
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV11")
 
     def apply_dv12(self):
+        start_time = time.perf_counter ()
         self.volatility_df["DV12"] = self.volatility_df.apply(self.calculate_percentage_time_acceleration, axis = 1)
 
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV12")
 
     def apply_dv13(self):
+        start_time = time.perf_counter ()
         self.volatility_df["DV13"] =  self.volatility_df.apply(self.calculate_percentage_time_deceleration, axis = 1)
 
+        end_time = time.perf_counter ()
+        print(end_time - start_time, "seconds  for DV13")
 
