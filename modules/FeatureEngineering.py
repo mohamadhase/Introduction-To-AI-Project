@@ -1,5 +1,4 @@
 import pandas as pd
-from scipy.fft import fft
 from modules.Data import Data
 import math
 from threading import Thread
