@@ -3,7 +3,6 @@ All the mentioned code and data in the "README.md" file can be found in the "Dev
 ## 1- Reading Data & Combining Files
 - The "Data" class handles the combination of data and converting it to a dataframe (for the purpose of calculating the Volatilaty Measures). Using the join functionality we take all the files named "_tracks.csv" and place them onto a list using the glob method. Then we read each element in that list as a csv and convert it to a dataframe using the dataframe concat and map methods (The "tracksMeta" fiiles follow the same concept).
 ```ruby
-start_time = time.perf_counter ()
 self.tracks = self.get_tracks_paths()
 self.metas = self.get_tracks_meta_paths()
 self.tracks = glob.glob(self.tracks)
