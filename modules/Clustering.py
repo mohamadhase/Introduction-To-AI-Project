@@ -45,31 +45,27 @@ class Clustering:
 
     def elbow_method(self):
         inertia = []
-        for i in range(1,11):
-            kmeans = KMeans(
-                n_clusters=i, init="k-means++",
-                n_init=10,
-                tol=1e-04, random_state=42
-            )
-            kmeans.fit(self.scaled_data)
-            inertia.append(kmeans.inertia_)
-        fig = go.Figure(data=go.Scatter(x=np.arange(1,11),y=inertia))
-        fig.update_layout(title="Inertia vs Cluster Number",xaxis=dict(range=[0,11],title="Cluster Number"),
-                        yaxis={'title':'Inertia'},
-                        annotations=[
-                dict(
-                    x=3,
-                    y=inertia[2],
-                    xref="x",
-                    yref="y",
-                    text="Elbow!",
-                    showarrow=True,
-                    arrowhead=7,
-                    ax=20,
-                    ay=-40
-                )
-            ])
-        fig.show()
+        k_range = range(1, 11)
+        for k in k_range:
+            kmeans_model = KMeans(n_clusters=k)
+            kmeans_model.fit(X)
+            inertia.append(kmeans_model.inertia_)
+
+        plt.figure(figsize=(16, 8))
+        plt.plot(k_range, inertia, 'bx-')
+        plt.xlabel('Number of Clusters')
+        plt.ylabel('Inertia')
+        plt.xticks(k_range)
+        x = range(1, len(inertia) + 1)
+        kn = KneeLocator(x, inertia, curve='convex', direction='decreasing')
+        plt.annotate("Elbow Point", va='center', ha='right', xy=(kn.knee, inertia[kn.knee - 1]),
+                     xytext=(kn.knee + 0.5, inertia[4] + 200),
+                     arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
+        plt.annotate("Chosen K", va='center', ha='right', xy=(3, inertia[2]),
+                     xytext=(3.5, inertia[2] + 200),
+                     arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
+        plt.title('Elbow Method Showing The Optimal K')
+        plt.show()
 
     def clustering(self):
         kmeans = KMeans(n_clusters=self.optimal_K)
