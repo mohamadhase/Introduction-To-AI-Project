@@ -36,7 +36,25 @@ class Clustering:
         new_df = new_df.reset_index()
         new_df =  new_df.drop(["trackId","recordingId","index"],axis=1)
         return new_df
-
+            label0 = pd.read_csv("Label0.csv")
+       label1 = pd.read_csv("Label1.csv")
+    label2 = pd.read_csv("Label2.csv")
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.set(title='An Axes Title', xlim=[0.5, 4.5], ylim=[-3, 7], ylabel='Y-Axis Label', xlabel='X-Axis Label')
+    # meanLabel1 = label0["DV1"].mean()
+    # meanLabel2 = label1["DV1"].mean()
+    # print(meanLabel1)
+    # print(meanLabel2)
+    # plt.plot(meanLabel1, meanLabel2)
+    # plt.show()
+    plt.plot(label0["DV1"])
+    plt.plot(label1["DV1"])
+    plt.plot(label2["DV1"])
+    plt.show()
+    # print(label0["DV1"].mean())
+    # print(label1["DV1"].mean())
+    # print(label2["DV1"].mean())
 
     def scaling_data(self):
         scaler = MinMaxScaler()
