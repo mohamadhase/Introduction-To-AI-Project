@@ -192,7 +192,7 @@ inertia = []
 <a href="https://ibb.co/znmMDDJ"><img src="https://i.ibb.co/f1XgLLv/newplot.png" alt="newplot" border="0" /></a>
 <figure>  <bold>line polar graph  to show the effect of each attribute in clustering  </bold>
 </figure>
-![newplot (1)](https://user-images.githubusercontent.com/76165108/166123515-c3e6a3b3-8247-43b8-a643-1368de24502e.png)
+<a href="https://ibb.co/SJXYnDb"><img src="https://i.ibb.co/V3WnS0R/newplot-1.png" alt="newplot-1" border="0" /></a>
 
 ## 5- first Step into category  analysis 
 using DV1 , DV2  , DV3 and DV4 we can start figuring out each label's category 
