@@ -15,12 +15,13 @@ class Clustering:
         self.df = self.read_data(file_name)
         self.cleaned_data = self.data_cleaning()
         self.scaled_data = self.scaling_data()
-        self.elbow_method()
+        #self.elbow_method()
         self.optimal_K = 3
         self.clusters = self.clustering()
         self.pi_ploting()
-        self.polar_ploting()
+        #self.polar_ploting()
         self.saving_data()
+        self.analysis_data()
     def read_data(self,file_name):
         data =  pd.read_csv(file_name)
         data = data[data["DV1"]!=0]
@@ -51,7 +52,7 @@ class Clustering:
                 n_init=10,
                 tol=1e-04, random_state=42
             )
-            kmeans.fit(self.scaled_data)
+            kmeans.fit(self.cleaned_data)
             inertia.append(kmeans.inertia_)
         fig = go.Figure(data=go.Scatter(x=np.arange(1,11),y=inertia))
         fig.update_layout(title="Inertia vs Cluster Number",xaxis=dict(range=[0,11],title="Cluster Number"),
@@ -96,3 +97,26 @@ class Clustering:
         self.clusters[self.clusters["label"]==1].to_csv("resultForLabel1.csv")
         self.clusters[self.clusters["label"]==2].to_csv("resultForLabel2.csv")
         self.clusters.to_csv("dataFrameWithPredictions.csv")
+
+    def analysis_data(self):
+        label0 = self.clusters[self.clusters["label"]==0]
+        label1 = self.clusters[self.clusters["label"]==1]
+        label2 = self.clusters[self.clusters["label"]==2]
+        print(f"mean  for label 0  {label0['DV1'].mean()}  ")
+        print(f"mean for label 1  {label1['DV1'].mean()}  ")
+        print(f"mean for label 2  {label2['DV1'].mean()}  ")
+        print(f"Coefficient for label 0  {label0['DV3'].mean()}  ")
+        print(f"Coefficient for label 1  {label1['DV3'].mean()}  ")
+        print(f"Coefficient for label 2  {label2['DV3'].mean()}  ")
+
+
+        print(f"mean2  for label 0  {label0['DV2'].mean()}  ")
+        print(f"mean2 for label 1  {label1['DV2'].mean()}  ")
+        print(f"mean2 for label 2  {label2['DV2'].mean()}  ")
+
+        print(f"Coefficient2 for label 0  {label0['DV4'].mean()}  ")
+        print(f"Coefficient2 for label 1  {label1['DV4'].mean()}  ")
+        print(f"Coefficient2 for label 2  {label2['DV4'].mean()}  ")
+
+## 25.3% is aggressive 
+## 33.3% is normal
