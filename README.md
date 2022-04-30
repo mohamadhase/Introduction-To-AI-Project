@@ -1,4 +1,4 @@
-# inD Dataset Volatility Measures Calculation
+# 1- inD Dataset Volatility Measures Calculation
 All the mentioned code and data in the "README.md" file can be found in the "Development" branch. Each team member's contribution to the code can also be found in the commits merged to the "Development" branch. The main will be used/merged to when reaching the final submission of this project.
 ## 1- Reading Data & Combining Files
 - The "Data" class handles the combination of data and converting it to a dataframe (for the purpose of calculating the Volatilaty Measures). Using the join functionality we take all the files named "_tracks.csv" and place them onto a list using the glob method. Then we read each element in that list as a csv and convert it to a dataframe using the dataframe concat and map methods (The "tracksMeta" fiiles follow the same concept).
@@ -123,3 +123,34 @@ thread.start()
 for thread in threads:
 thread.join()
 ```
+# Part 2: Dataset Clean Up & Clustering
+## 1- Data Exploration & EDA
+## 2- Finding The Optimal Amount of Clusters Using The Elbow Method
+- To be able to detect and find the optimal number of clusters, we have to run the K-Means Clustering algorithm with a random amount of clusters (1 to 10 in our case) to find the sum of squared distances to their closest cluster center for each cluster number's run and save that result to a list called "inertia". Then, using a plot, we represented the inertia of each run in comparison to its cluster number's run. Finally, we used the "KneeLocator" package to observe where the graph begings to flatten out so we could find the elbow point.
+```ruby
+inertia = []
+    k_range = range(1, 11)
+    for k in k_range:
+        kmeans_model = KMeans(n_clusters=k)
+        kmeans_model.fit(X)
+        inertia.append(kmeans_model.inertia_)
+
+    plt.figure(figsize=(16, 8))
+    plt.plot(k_range, inertia, 'bx-')
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Inertia')
+    plt.xticks(k_range)
+    x = range(1, len(inertia) + 1)
+    kn = KneeLocator(x, inertia, curve='convex', direction='decreasing')
+    plt.annotate("Elbow Point", va='center', ha='right', xy=(kn.knee, inertia[kn.knee - 1]),
+                 xytext=(kn.knee + 0.5, inertia[4] + 200),
+                 arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
+    plt.annotate("Chosen K", va='center', ha='right', xy=(3, inertia[2]),
+                 xytext=(3.5, inertia[2] + 200),
+                 arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
+    plt.title('Elbow Method Showing The Optimal K')
+    plt.show()
+```
+- The plot shows that the optimal number of clusters is 5, but we ended up using the 3 for the number of clusters (because we're interested only in 3 classifications to the drivers which are conservative, normal, and aggressive)
+## 3- Model Tranining & Result Extraction
+## 4- Result Analysis
