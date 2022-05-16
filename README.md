@@ -1,3 +1,7 @@
+# About  The Project 
+- this project is part of Introduction to AI Course ,
+our mission is to Classify the data collected for the drivers into 3 classes  ( aggrissive , normal ,  conservative) by using K-means Algorithm in Python
+the added value of this project is to use the output model to  in the Automation Driving Process to help the Agent Predict the Actions of the Drivers based on the predicted class .
 # Part 1: inD Dataset Volatility Measures Calculation
 All the mentioned code and data in the "README.md" file can be found in the "Development" branch. Each team member's contribution to the code can also be found in the commits merged to the "Development" branch. The main will be used/merged to when reaching the final submission of this project.
 ## 1- Reading Data & Combining Files
