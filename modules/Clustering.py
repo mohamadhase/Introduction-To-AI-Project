@@ -7,22 +7,33 @@ import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.decomposition import PCA
 import seaborn as sns
+from sympy import re
 from yaml import ScalarNode; sns.set()  # for plot styling
 import matplotlib.pyplot as plt
-from kneed import KneeLocator
+import glob
+import os.path
+import pandas as pd
+import time
+
+# from kneed import KneeLocator
 
 class Clustering:
     def __init__(self,file_name):
+
         self.df = self.read_data(file_name)
+
+        self.tracks = glob.glob(os.path.join("data/", "*_tracksMeta.csv"))
+        self.df_with_classes = pd.concat(map(pd.read_csv, self.tracks), ignore_index = True)
+        self.df["class"] =  self.df.apply(self.test, axis = 1)
+        self.df = self.df[self.df["class"]==1]
         self.cleaned_data = self.data_cleaning()
         self.scaled_data = self.scaling_data()
-        self.elbow_method()
+        #self.elbow_method()
         self.optimal_K = 3
         self.clusters = self.clustering()
         self.pi_ploting()
         self.polar_ploting()
         self.saving_data()
-        self.analysis_data()
     def read_data(self,file_name):
         data =  pd.read_csv(file_name)
         data = data[data["DV1"]!=0]
@@ -39,35 +50,36 @@ class Clustering:
         scaler = MinMaxScaler()
         scaler.fit(self.cleaned_data)
         return scaler.transform(self.cleaned_data)
-    def elbow_method(self):
-        inertia = []
-        k_range = range(1, 11)
-        for k in k_range:
-            kmeans_model = KMeans(n_clusters=k)
-            kmeans_model.fit(X)
-            inertia.append(kmeans_model.inertia_)
+    # def elbow_method(self):
+    #     inertia = []
+    #     k_range = range(1, 11)
+    #     for k in k_range:
+    #         kmeans_model = KMeans(n_clusters=k)
+    #         kmeans_model.fit(X)
+    #         inertia.append(kmeans_model.inertia_)
 
-        plt.figure(figsize=(16, 8))
-        plt.plot(k_range, inertia, 'bx-')
-        plt.xlabel('Number of Clusters')
-        plt.ylabel('Inertia')
-        plt.xticks(k_range)
-        x = range(1, len(inertia) + 1)
-        kn = KneeLocator(x, inertia, curve='convex', direction='decreasing')
-        plt.annotate("Elbow Point", va='center', ha='right', xy=(kn.knee, inertia[kn.knee - 1]),
-                     xytext=(kn.knee + 0.5, inertia[4] + 200),
-                     arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
-        plt.annotate("Chosen K", va='center', ha='right', xy=(3, inertia[2]),
-                     xytext=(3.5, inertia[2] + 200),
-                     arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
-        plt.title('Elbow Method Showing The Optimal K')
-        plt.show()
+    #     plt.figure(figsize=(16, 8))
+    #     plt.plot(k_range, inertia, 'bx-')
+    #     plt.xlabel('Number of Clusters')
+    #     plt.ylabel('Inertia')
+    #     plt.xticks(k_range)
+    #     x = range(1, len(inertia) + 1)
+    #     kn = KneeLocator(x, inertia, curve='convex', direction='decreasing')
+    #     plt.annotate("Elbow Point", va='center', ha='right', xy=(kn.knee, inertia[kn.knee - 1]),
+    #                  xytext=(kn.knee + 0.5, inertia[4] + 200),
+    #                  arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
+    #     plt.annotate("Chosen K", va='center', ha='right', xy=(3, inertia[2]),
+    #                  xytext=(3.5, inertia[2] + 200),
+    #                  arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
+    #     plt.title('Elbow Method Showing The Optimal K')
+    #     plt.show()
 
     def clustering(self):
         kmeans = KMeans(n_clusters=self.optimal_K)
         kmeans.fit(self.scaled_data)
         clusters=pd.DataFrame(self.cleaned_data,columns=self.df.drop(["trackId","recordingId"],axis=1).columns)
         clusters['label']=kmeans.labels_
+        print(pd.DataFrame(kmeans.cluster_centers_))
         return clusters
     def polar_ploting(self):
         polar=self.clusters.groupby("label").mean().reset_index()
@@ -87,25 +99,16 @@ class Clustering:
         self.clusters.to_csv("dataFrameWithPredictions.csv") 
         self.clusters.to_csv("dataFrameWithPredictions.csv")
 
-    def analysis_data(self):
-        label0 = self.clusters[self.clusters["label"]==0]
-        label1 = self.clusters[self.clusters["label"]==1]
-        label2 = self.clusters[self.clusters["label"]==2]
-        print(f"mean  for label 0  {label0['DV1'].mean()}  ")
-        print(f"mean for label 1  {label1['DV1'].mean()}  ")
-        print(f"mean for label 2  {label2['DV1'].mean()}  ")
-        print(f"Coefficient for label 0  {label0['DV3'].mean()}  ")
-        print(f"Coefficient for label 1  {label1['DV3'].mean()}  ")
-        print(f"Coefficient for label 2  {label2['DV3'].mean()}  ")
+    def test(self,row):
+        track_id = int(row['trackId'])
+        recording_id = int(row['recordingId'])
+        condition = (self.df_with_classes["trackId"] == track_id) & (self.df_with_classes["recordingId"] == recording_id)
 
+        x=  self.df_with_classes[condition]["class"].values
+        if (len(x)==0):
+            return 0
+        if(x[0]=="pedestrian" or x[0]=="bicycle"):
+            return 0
+        return 1
 
-        print(f"mean2  for label 0  {label0['DV2'].mean()}  ")
-        print(f"mean2 for label 1  {label1['DV2'].mean()}  ")
-        print(f"mean2 for label 2  {label2['DV2'].mean()}  ")
-
-        print(f"Coefficient2 for label 0  {label0['DV4'].mean()}  ")
-        print(f"Coefficient2 for label 1  {label1['DV4'].mean()}  ")
-        print(f"Coefficient2 for label 2  {label2['DV4'].mean()}  ")
-
-## 25.3% is aggressive 
-## 33.3% is normal 
+        
