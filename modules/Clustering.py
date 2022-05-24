@@ -15,7 +15,7 @@ import os.path
 import pandas as pd
 import time
 
-# from kneed import KneeLocator
+from kneed import KneeLocator
 
 class Clustering:
     def __init__(self,file_name):
@@ -28,7 +28,7 @@ class Clustering:
         self.df = self.df[self.df["class"]==1]
         self.cleaned_data = self.data_cleaning()
         self.scaled_data = self.scaling_data()
-        #self.elbow_method()
+        self.elbow_method()
         self.optimal_K = 3
         self.clusters = self.clustering()
         self.pi_ploting()
@@ -50,29 +50,29 @@ class Clustering:
         scaler = MinMaxScaler()
         scaler.fit(self.cleaned_data)
         return scaler.transform(self.cleaned_data)
-    # def elbow_method(self):
-    #     inertia = []
-    #     k_range = range(1, 11)
-    #     for k in k_range:
-    #         kmeans_model = KMeans(n_clusters=k)
-    #         kmeans_model.fit(X)
-    #         inertia.append(kmeans_model.inertia_)
+    def elbow_method(self):
+        inertia = []
+        k_range = range(1, 11)
+        for k in k_range:
+            kmeans_model = KMeans(n_clusters=k)
+            kmeans_model.fit(X)
+            inertia.append(kmeans_model.inertia_)
 
-    #     plt.figure(figsize=(16, 8))
-    #     plt.plot(k_range, inertia, 'bx-')
-    #     plt.xlabel('Number of Clusters')
-    #     plt.ylabel('Inertia')
-    #     plt.xticks(k_range)
-    #     x = range(1, len(inertia) + 1)
-    #     kn = KneeLocator(x, inertia, curve='convex', direction='decreasing')
-    #     plt.annotate("Elbow Point", va='center', ha='right', xy=(kn.knee, inertia[kn.knee - 1]),
-    #                  xytext=(kn.knee + 0.5, inertia[4] + 200),
-    #                  arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
-    #     plt.annotate("Chosen K", va='center', ha='right', xy=(3, inertia[2]),
-    #                  xytext=(3.5, inertia[2] + 200),
-    #                  arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
-    #     plt.title('Elbow Method Showing The Optimal K')
-    #     plt.show()
+        plt.figure(figsize=(16, 8))
+        plt.plot(k_range, inertia, 'bx-')
+        plt.xlabel('Number of Clusters')
+        plt.ylabel('Inertia')
+        plt.xticks(k_range)
+        x = range(1, len(inertia) + 1)
+        kn = KneeLocator(x, inertia, curve='convex', direction='decreasing')
+        plt.annotate("Elbow Point", va='center', ha='right', xy=(kn.knee, inertia[kn.knee - 1]),
+                     xytext=(kn.knee + 0.5, inertia[4] + 200),
+                     arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
+        plt.annotate("Chosen K", va='center', ha='right', xy=(3, inertia[2]),
+                     xytext=(3.5, inertia[2] + 200),
+                     arrowprops={'arrowstyle': '-|>', 'lw': 1, 'color': 'black'})
+        plt.title('Elbow Method Showing The Optimal K')
+        plt.show()
 
     def clustering(self):
         kmeans = KMeans(n_clusters=self.optimal_K)
